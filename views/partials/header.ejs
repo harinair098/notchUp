@@ -19,4 +19,15 @@
 
             </div>
         </nav>
-      
+        <%if(success && success.length>0){%>
+            <div class=" pattern " id="success">
+                <div class="alert alert-success pattern" style="margin: 0; border: none;" role="alert">
+                    <h4 style="background-color: green;width:50%;margin: auto; text-align: center; border-radius: 0.3em;color: white;">
+                        <%=success%>
+                    </h4>
+                </div>
+            </div>
+                <%}%>
+                <script type="text/javascript">
+                    window.setTimeout("document.getElementById('success').style.display='none';", 3500); 
+                </script>

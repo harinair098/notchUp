@@ -6,18 +6,27 @@ const path=require('path');
 const dotenv = require('dotenv');
 dotenv.config();
 const fetch=require('node-fetch');
-const request = require("request");
+const flash=require("connect-flash");
 const nodemailer = require("nodemailer")
-const sendgridtransport=require("nodemailer-sendgrid-transport")
+// const request = require("request");
+// const sendgridtransport=require("nodemailer-sendgrid-transport")
 const Demo = require("./models/demo");
 
-const transporter = nodemailer.createTransport(
-    sendgridtransport({
-        auth:{
-            api_key:process.env.SENDGRID_API_KEY,
-        }
-    })
-)
+// const transporter = nodemailer.createTransport(
+//     sendgridtransport({
+//         auth:{
+//             api_key:process.env.SENDGRID_API_KEY,
+//         }
+//     })
+// )
+
+let transporter = nodemailer.createTransport({
+    service:'gmail',
+    auth:{
+        user:process.env.USER,
+        pass:process.env.PASSWORD
+    }
+})
 
 mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@hari.r24lw.mongodb.net/notchup?retryWrites=true&w=majority`,{useNewUrlParser: true,useCreateIndex: true, useUnifiedTopology: true});
 mongoose.connection.once('open',function(){
@@ -29,13 +38,18 @@ mongoose.connection.once('open',function(){
 app.set('view engine','ejs')
 app.set('views',path.join(__dirname,'views'));
 app.use(express.static(__dirname+ "/elements"));
+app.use(flash());
+app.use(require("express-session")({
+    secret:"rusty is the best dog",
+    resolve: false,
+    saveUninitialized:false
+}))
 
 app.use(bodyparser.urlencoded({extended:true}));
 app.use(function(req,res,next){
-    res.locals.day=day;
-    res.locals.month=month;
     res.locals.min_date=min_date;
     res.locals.max_date=max_date;
+    res.locals.success=req.flash("success");
     next();
 }) 
 
@@ -65,17 +79,26 @@ app.post('/',function(req,res){
         }
         else{
             dem.save();
-            res.redirect("/demo")
+            return transporter.sendMail({
+                to:req.body.email,
+                from: "hariqwrty@gmail.com",
+                subject: "NotchUp Trial Class Booked successfully",
+                html: "<div> <h1>Dear "+ req.body.parentname +"</h1>"+ 
+                "<h4>"+ req.body.childname +"'s class on "+  req.body.time +" has been successfully booked.</h4> </div>"
+            },function(err , data){
+                if(err){
+                    console.log('error occured',err);
+                }else{
+                   req.flash("success","mail sent!")
+                   console.log('email sent')
+                   res.redirect("/demo")
+                }
+            });
+            
             
         }
     })
-    return transporter.sendMail({
-        to:req.body.email,
-        from: "h.nair098@gmail.com",
-        subject: "NotchUp Trial Class Booked successfully",
-        html: "<div> <h1>Dear "+ req.body.parentname +"</h1>"+ 
-        "<h4>"+ req.body.childname +"'s class on "+  req.body.time +" has been successfully booked.</h4> </div>"
-    })
+   
 })
 
 

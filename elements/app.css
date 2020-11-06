@@ -16,3 +16,7 @@
     width: 50%;
     margin-left: 25%;
 }
+.pattern{
+    background-repeat: no-repeat;
+    background-size: cover;
+}
