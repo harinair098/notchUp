@@ -1,0 +1,123 @@
+<%- include("./partials/header") %>
+
+    <div style="text-align: center;">
+        <h1>demo page</h1>
+    </div>
+    <div class="container" id="body">
+    <br>
+    <br>
+    <form action="\" method="POST">
+        <div class="form-group">
+            <b>Parent's name:</b>
+            <input type="text" class="form-control" name="parentname" placeholder="john michael" required >
+        </div>
+        <div class="form-group">
+            <b>Contact number:</b>
+            <input type="text" name="number" class="form-control" placeholder="9876543211" min="10" max="12" required>
+        </div>
+        <div class="form-group">
+            <b>Enter your mail id:</b>
+            <input type="email" name="email" placeholder="john@gmail.com" class="form-control" required>
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+        </div>
+        <div class="form-group">
+            <b>Name of the student:</b>
+            <input type="text" name="childname" placeholder="student name" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <b>Student's age:</b>
+            <input type="number" class="form-control" name="age" placeholder="enter age" required>
+        </div>
+        <div class="form-group">
+            <label for="course"><b>Select course:</b></label>
+             <select class="form-control" name="course" id="course" required >
+                <option value="">Select a course for the demo</option>
+                <option value="0" >Scratch Junior</option>
+                <option value="1">Game Development</option>
+                <option value="2">App Development</option>   
+                <option value="3">Web Development</option>
+                <option value="4">Python</option>
+    </select>
+        </div>
+        <div class="form-group">
+            <b>Date for demo class:</b>
+            <input type="date" name="date" class="form-control" id="date" onchange="sec_func()" placeholder="select date for demo class" min="<%=min_date%>" max="<%=max_date%>" required >
+        </div>
+        <div class="form-group">
+            <b>Time for demo class:</b>
+            <label for="time"></label>
+            <select class="form-control" name="time" id="time" required>
+                <option value="">Select your time slot</option>
+            </select>
+        </div>
+        <input type="submit" class="btn btn-danger" >
+    </form>
+</div>
+    
+
+<script>
+    var selected_date,current_hour,current_date;
+   
+    const url="https://script.google.com/macros/s/AKfycbzJ8Nn2ytbGO8QOkGU1kfU9q50RjDHje4Ysphyesyh-osS76wep/exec";
+    // async function func(){
+    //     var x=document.getElementById("course").value;
+    //     console.log(x);
+    //     const response= await fetch(url);
+    //     var data = await response.json();
+    //     var dat= await data[x].slots;
+    //     // console.log(dat);
+    //     show(dat);
+    // }
+    function show(data){
+        // console.log("data in function ",data[0].slot)
+        let tab=0;
+        for (var i=0; i< data.length; i++){
+            // console.log(data[i].slot)
+            data[i].slot/=1000
+            var a= new Date((data[i].slot)*1000)
+            // console.log('a is ',a)
+            var year = a.getFullYear();
+            var month = a.getMonth();
+            var date = a.getDate();
+            var hour = a.getHours();
+            var min = a.getMinutes();
+            if(min == '0'){
+                min = '00';
+            }
+            var time_slot=date + '/' + month + '/' + year + '  ' + hour + ':' + min;
+            // console.log("date ",date)
+            // console.log("selected date",selected_date)
+            if(date === selected_date){
+                if(selected_date == current_date){
+                    if(hour == current_hour+4){
+                        tab += `<option>${time_slot}</option>`
+                    }      
+                }else{
+                    tab += `<option>${time_slot}</option>`
+                }
+            }
+            // console.log(time_slot)
+        }
+        if(tab==0){
+            tab+=`<option>SORRY, NO SLOTS AVAILABLE. </option>`
+        }
+        document.getElementById("time").innerHTML = tab;
+    }
+    async function sec_func(){
+        var day=document.getElementById('date').value
+        selected_date= new Date(day).getDate();
+        
+        current_hour= new Date().getHours()
+        current_date= new Date().getDate()
+        console.log("current hour ",current_hour )
+
+        var x=document.getElementById("course").value;
+        console.log(x);
+        const response= await fetch(url);
+        var data = await response.json();
+        var dat= await data[x].slots;
+        // console.log(dat);
+        show(dat);
+    }
+</script>
+<%- include("./partials/footer") %>

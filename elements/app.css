@@ -1,0 +1,18 @@
+.form-control{
+    border-radius: 2em;
+    border:1.5px solid black;
+    align-content: center;
+    margin:0 0.5em;
+}
+
+#body{
+    width: 50%;
+    align-content: center;
+    margin: 0 auto;
+}
+
+.btn-danger{
+    border-radius: 1.2em;
+    width: 50%;
+    margin-left: 25%;
+}
