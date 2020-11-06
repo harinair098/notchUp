@@ -79,7 +79,7 @@ app.post('/',function(req,res){
         }
         else{
             dem.save();
-            return transporter.sendMail({
+             transporter.sendMail({
                 to:req.body.email,
                 from: "hariqwrty@gmail.com",
                 subject: "NotchUp Trial Class Booked successfully",
@@ -91,7 +91,7 @@ app.post('/',function(req,res){
                 }else{
                    req.flash("success","mail sent!")
                    console.log('email sent')
-                   res.redirect("/demo")
+                   res.redirect("/demo");
                 }
             });
             
